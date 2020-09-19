@@ -6,7 +6,7 @@ const PostSchema = new mongoose_1.Schema({
     url: { type: String, required: true, unique: true, lowercase: true },
     content: { type: String, required: true },
     image: String,
-    createdAt: { type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now() },
     updatedAt: Date
 });
 exports.default = mongoose_1.model('Post', PostSchema);

@@ -13,53 +13,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const Post_1 = __importDefault(require("../models/Post"));
-class PostRoutes {
+const User_1 = __importDefault(require("../models/User"));
+class UserRoutes {
     constructor() {
         this.router = express_1.Router();
         this.routes();
     }
-    getPosts(req, res) {
+    getUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const posts = yield Post_1.default.find();
-            res.json(posts);
+            const users = yield User_1.default.find();
+            res.json(users);
         });
     }
-    getPost(req, res) {
+    getUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield Post_1.default.find({ url: req.params.url });
-            res.json(post);
+            const user = yield User_1.default.find({ email: req.params.email }).populate('posts', 'title url');
+            res.json(user);
         });
     }
-    createPost(req, res) {
+    createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, url, content, image } = req.body;
-            const newPost = new Post_1.default({ title, url, content, image });
-            yield newPost.save();
-            res.json({ data: newPost });
+            const { name, email, password, username } = req.body;
+            const newUser = new User_1.default({ name, email, password, username });
+            yield newUser.save();
+            res.json({ data: newUser });
         });
     }
-    updatePost(req, res) {
+    updateUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { url } = req.params;
-            const post = yield Post_1.default.findOneAndUpdate({ url }, req.body);
-            res.json(post);
+            const { email } = req.params;
+            const user = yield User_1.default.findOneAndUpdate({ email }, req.body);
+            res.json(user);
         });
     }
-    deletePost(req, res) {
+    deleteUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { url } = req.params;
-            const post = yield Post_1.default.findOneAndDelete({ url });
-            res.json({ response: 'Post Deleted successfully.' });
+            const { email } = req.params;
+            const user = yield User_1.default.findOneAndDelete({ email });
+            res.json({ response: 'User Deleted successfully.' });
         });
     }
     routes() {
-        this.router.get('/', this.getPosts);
-        this.router.get('/:url', this.getPost);
-        this.router.post('/', this.createPost);
-        this.router.put('/:url', this.updatePost);
-        this.router.delete('/:url', this.deletePost);
+        this.router.get('/', this.getUsers);
+        this.router.get('/:email', this.getUser);
+        this.router.post('/', this.createUser);
+        this.router.put('/:email', this.updateUser);
+        this.router.delete('/:email', this.deleteUser);
     }
 }
-const postRoutes = new PostRoutes();
-exports.default = postRoutes.router;
+const userRoutes = new UserRoutes();
+exports.default = userRoutes.router;

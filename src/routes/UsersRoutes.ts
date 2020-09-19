@@ -1,8 +1,8 @@
 import { Request, Response, Router } from 'express';
 
-import Post from '../models/Post';
+import User from '../models/User';
 
-class PostRoutes {
+class UserRoutes {
     
     router: Router;
 
@@ -11,44 +11,44 @@ class PostRoutes {
         this.routes();
     }
 
-    public async getPosts(req: Request, res: Response):Promise<void>{
-        const posts = await Post.find();
-        res.json(posts);
+    public async getUsers(req: Request, res: Response):Promise<void>{
+        const users = await User.find();
+        res.json(users);
     }
 
-    public async getPost(req: Request, res: Response):Promise<void>{
-        const post = await Post.find({url: req.params.url});
-        res.json(post);
+    public async getUser(req: Request, res: Response):Promise<void>{
+        const user = await User.find({email: req.params.email}).populate('posts', 'title url');
+        res.json(user);
     }
 
-    public async createPost(req: Request, res: Response):Promise<void>{
-        const { title, url, content, image } = req.body;
-        const newPost = new Post({title, url, content, image});
-        await newPost.save();
-        res.json({ data: newPost });
+    public async createUser(req: Request, res: Response):Promise<void>{
+        const { name, email, password, username } = req.body;
+        const newUser = new User({name, email, password, username});
+        await newUser.save();
+        res.json({ data: newUser });
 
     }
 
-    public async updatePost(req: Request, res: Response):Promise<void>{
-        const { url } = req.params;
-        const post = await Post.findOneAndUpdate({ url }, req.body);
-        res.json(post);
+    public async updateUser(req: Request, res: Response):Promise<void>{
+        const { email } = req.params;
+        const user = await User.findOneAndUpdate({ email }, req.body);
+        res.json(user);
     }
 
-    public async deletePost(req: Request, res: Response):Promise<void>{
-        const { url } = req.params;
-        const post = await Post.findOneAndDelete({ url });
-        res.json({response: 'Post Deleted successfully.'});
+    public async deleteUser(req: Request, res: Response):Promise<void>{
+        const { email } = req.params;
+        const user = await User.findOneAndDelete({ email });
+        res.json({response: 'User Deleted successfully.'});
     }
 
     routes(){
-        this.router.get('/', this.getPosts);
-        this.router.get('/:url', this.getPost);
-        this.router.post('/', this.createPost);
-        this.router.put('/:url', this.updatePost);
-        this.router.delete('/:url', this.deletePost);
+        this.router.get('/', this.getUsers);
+        this.router.get('/:email', this.getUser);
+        this.router.post('/', this.createUser);
+        this.router.put('/:email', this.updateUser);
+        this.router.delete('/:email', this.deleteUser);
     }
 }
 
-const postRoutes = new PostRoutes();
-export default postRoutes.router;
+const userRoutes = new UserRoutes();
+export default userRoutes.router;
